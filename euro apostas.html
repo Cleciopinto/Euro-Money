@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Apostas - Era Digital</title>
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace; /* Fonte futurista */
+            margin: 0;
+            background-color: #0b132b; /* Fundo escuro e moderno */
+            color: #81ecec; /* Cor de texto neon */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 40px;
+        }
+        .container {
+            max-width: 960px;
+            width: 90%;
+            padding: 40px;
+            background-color: rgba(25, 37, 65, 0.8); /* Painel semi-transparente */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #a7ffeb; /* Destaque neon */
+            margin-bottom: 30px;
+            letter-spacing: 0.05em;
+        }
+        .acoes {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .acoes button {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 12px 20px;
+            color: #0b132b;
+            border: 2px solid #81ecec;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: bold;
+            background-color: #81ecec;
+        }
+        .acoes button:hover {
+            background-color: #0b132b;
+            color: #81ecec;
+        }
+        .forms-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .form-container {
+            flex: 1;
+            padding: 30px;
+            border: 2px solid #4a69bd; /* Borda azul futurista */
+            border-radius: 8px;
+            background-color: rgba(44, 62, 80, 0.7);
+        }
+        .form-container h2 {
+            color: #6dd5ed;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #eee;
+            letter-spacing: 0.02em;
+        }
+        .form-container input[type="text"],
+        .form-container input[type="password"],
+        .form-container input[type="number"] {
+            width: calc(100% - 16px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #6dd5ed;
+            border-radius: 5px;
+            background-color: #2c3e50;
+            color: #eee;
+            box-sizing: border-box;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 12px 20px;
+            color: #0b132b;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 0.03em;
+        }
+        .form-container button[type="submit"].cadastro-submit {
+            background-color: #55efc4; /* Verde neon */
+        }
+        .form-container button[type="submit"].cadastro-submit:hover {
+            background-color: #0b132b;
+            color: #55efc4;
+            border: 2px solid #55efc4;
+        }
+        .form-container button[type="submit"].login-submit {
+            background-color: #f9ca24; /* Amarelo neon */
+        }
+        .form-container button[type="submit"].login-submit:hover {
+            background-color: #0b132b;
+            color: #f9ca24;
+            border: 2px solid #f9ca24;
+        }
+        .apostadores-lista h2, .sorteios h2 {
+            color: #6dd5ed;
+            margin-top: 30px;
+            border-bottom: 2px solid #6dd5ed;
+            padding-bottom: 10px;
+            letter-spacing: 0.03em;
+        }
+        .apostadores-lista ul {
+            list-style: none;
+            padding: 0;
+        }
+        .apostadores-lista li {
+            background-color: rgba(44, 62, 80, 0.5);
+            border: 1px solid #6dd5ed;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #eee;
+        }
+        .apostadores-lista li span {
+            flex-grow: 1;
+        }
+        .apostadores-lista li a {
+            text-decoration: none;
+            color: #a7ffeb;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 2px solid #a7ffeb;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: bold;
+        }
+        .apostadores-lista li a:hover {
+            background-color: #a7ffeb;
+            color: #0b132b;
+        }
+        .sorteios ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sorteios li {
+            background-color: rgba(44, 62, 80, 0.5);
+            border: 1px solid #6dd5ed;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            color: #eee;
+        }
+        .comprovante-container {
+            background-color: rgba(25, 37, 65, 0.9);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 500px;
+            margin: 30px auto;
+        }
+        .comprovante-container h2 {
+            text-align: center;
+            color: #ff6b6b; /* Vermelho neon para o comprovante */
+            margin-bottom: 30px;
+            letter-spacing: 0.05em;
+        }
+        .comprovante-container p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            color: #ddd;
+        }
+        .comprovante-container strong {
+            font-weight: bold;
+            color: #f4f8ff;
+        }
+        .comprovante-container .acertou {
+            color: #55efc4;
+            font-weight: bold;
+            font-size: 1.2em;
+            letter-spacing: 0.03em;
+        }
+        .comprovante-container .nao-acertou {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.2em;
+            letter-spacing: 0.03em;
+        }
+        .comprovante-container .voltar {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .comprovante-container .voltar a {
+            text-decoration: none;
+            color: #f9ca24;
+            border: 2px solid #f9ca24;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: bold;
+        }
+        .comprovante-container .voltar a:hover {
+            background-color: #f9ca24;
+            color: #0b132b;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1><span style="color: #00b894;">A</span>postas <span style="color: #00b894;">F</span>uturo</h1>
+
+        <div class="acoes">
+            <button class="cadastro-btn" onclick="showForm('cadastro-form')">Iniciar Cadastro</button>
+            <button class="login-btn" onclick="showForm('login-form')">Acesso Admin</button>
+        </div>
+
+        <div class="forms-container">
+            <div id="cadastro-form" class="form-container hidden">
+                <h2>Novo Apostador</h2>
+                <form action="#" method="post">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" required>
+
+                    <label for="sobrenome">Sobrenome:</label>
+                    <input type="text" id="sobrenome" name="sobrenome" required>
+
+                    <label for="numero1">Número 1 (1-27):</label>
+                    <input type="number" id="numero1" name="numero1" min="1" max="27" required>
+
+                    <label for="numero2">Número 2 (1-27):</label>
+                    <input type="number" id="numero2" name="numero2" min="1" max="27" required>
+
+                    <label for="numero3">Número 3 (1-27):</label>
+                    <input type="number" id="numero3" name="numero3" min="1" max="27" required>
+
+                    <button type="submit" class="cadastro-submit">Registrar</button>
+                </form>
+            </div>
+
+            <div id="login-form" class="form-container hidden">
+                <h2>Painel Administrativo</h2>
+                <form action="#" method="post">
+                    <label for="usuario">Usuário:</label>
+                    <input type="text" id="usuario" name="usuario" required>
+
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" required>
+
+                    <button type="submit" class="login-submit">Entrar</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="apostadores-lista">
+            <h2>Participantes Ativos</h2>
+            <ul>
+                <li>
+                    <span>Neo Cyber - Números: [7, 12, 23]</span>
+                    <a href="#comprovante_neo" onclick="showComprovante('Neo Cyber', '[7, 12, 23]', '2077-05-01 21:00:00', '[8, 15, 23]', false)">Verificar Bilhete</a>
+                </li>
+                <li>
+                    <span>Trinity Matrix - Números: [1, 11, 21]</span>
+                    <a href="#comprovante_trinity" onclick="showComprovante('Trinity Matrix', '[1, 11, 21]', '2077-05-01 21:00:00', '[1, 11, 21]', true)">Verificar Bilhete</a>
+                </li>
+                <li>
+                    <span>Morpheus Oracle - Números: [5, 15, 25]</span>
+                    <a href="#comprovante_morpheus" onclick="showComprovante('Morpheus Oracle', '[5, 15, 25]', '2077-05-01 21:00:00', '[3, 15, 27]', false)">Verificar Bilhete</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sorteios">
+            <h2>Últimos Resultados</h2>
+            <ul>
+                <li>
+                    Data: 2077-05-01 21:00:00 - Resultado: [8, 15, 23]
+                </li>
+                <li>
+                    Data: 2077-04-30 21:00:00 - Resultado: [2, 18, 25]
+                </li>
+            </ul>
+        </div>
+
+        <div id="comprovante" class="comprovante-container hidden">
+            <h2>Resultado do Bilhete</h2>
+            <p><strong>Participante:</strong> <span id="comprovante-nome"></span></p>
+            <p><strong>Números Escolhidos:</strong> <span id="comprovante-numeros"></span></p>
+            <p><strong>Data do Sorteio:</strong> <span id="comprovante-data"></span></p>
+            <p><strong>Números Sorteados:</strong> <span id="comprovante-resultado"></span></p>
+            <p><strong>Status:</strong> <span id="comprovante-situacao"></span></p>
+            <div class="voltar">
+                <a href="#" onclick="showPage('main')">Voltar ao Painel Principal</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showForm(id) {
+            const cadastroForm = document.getElementById('cadastro-form');
+            const loginForm = document.getElementById('login-form');
+
+            cadastroForm.classList.add('hidden');
+            loginForm.classList.add('hidden');
+
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function showPage(id) {
+            document.querySelector('.container').classList.remove('hidden');
+            document.getElementById('comprovante').classList.add('hidden');
+            document.getElementById('cadastro-form').classList.add('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+        }
+
+        function showComprovante(nome, numeros, data, resultado, acertou) {
+            document.querySelector('.container').classList.add('hidden');
+            document.getElementById('cadastro-form').classList.add('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('comprovante').classList.remove('hidden');
+
+            document.getElementById('comprovante-nome').textContent = nome;
+            document.getElementById('comprovante-numeros').textContent = numeros;
+            document.getElementById('comprovante-data').textContent = data;
+            document.getElementById('comprovante-resultado').textContent = resultado;
+
+            const situacaoSpan = document.getElementById('comprovante-situacao');
+            situacaoSpan.textContent = acertou ? 'CONGRATULAÇÕES! ACERTOU!' : 'QUE PENA! NÃO FOI DESSA VEZ.';
+            situacaoSpan.className = acertou ? 'acertou' : 'nao-acertou';
+        }
+
+        // Inicialmente mostrar apenas a página principal
+        showPage('main');
+    </script>
+</body>
+</html>
