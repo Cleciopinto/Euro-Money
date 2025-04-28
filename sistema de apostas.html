@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Apostas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        .acoes {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .acoes a, form {
+            margin: 0 10px;
+            display: inline-block;
+        }
+        .sorteios {
+            margin-top: 30px;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"], button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .voltar {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .comprovante {
+            padding: 20px;
+            border: 1px solid #ccc;
+            max-width: 500px;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+        .acertou {
+            color: green;
+            font-weight: bold;
+        }
+        .nao-acertou {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Apostas</h1>
+
+    <!-- Cadastro de Apostador -->
+    <div class="form-container">
+        <h2>Cadastro de Apostador</h2>
+        <form id="formCadastro">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="numero1">Número 1:</label>
+            <input type="number" id="numero1" name="numero1" min="1" max="27" required>
+
+            <label for="numero2">Número 2:</label>
+            <input type="number" id="numero2" name="numero2" min="1" max="27" required>
+
+            <label for="numero3">Número 3:</label>
+            <input type="number" id="numero3" name="numero3" min="1" max="27" required>
+
+            <button type="submit">Cadastrar Apostador</button>
+        </form>
+    </div>
+
+    <!-- Visualização dos Apostadores -->
+    <h2>Apostadores Cadastrados</h2>
+    <ul id="listaApostadores"></ul>
+
+    <!-- Sorteio -->
+    <div class="acoes">
+        <button onclick="realizarSorteio()">Realizar Sorteio</button>
+    </div>
+
+    <!-- Sorteios e Resultados -->
+    <div class="sorteios">
+        <h2>Últimos Sorteios</h2>
+        <ul id="listaSorteios"></ul>
+    </div>
+
+    <script>
+        // Carregar os dados do localStorage ao carregar a página
+        let apostadores = JSON.parse(localStorage.getItem('apostadores')) || [];
+        let sorteios = JSON.parse(localStorage.getItem('sorteios')) || [];
+
+        // Função para cadastrar apostador
+        document.getElementById('formCadastro').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            let nome = document.getElementById('nome').value;
+            let numero1 = parseInt(document.getElementById('numero1').value);
+            let numero2 = parseInt(document.getElementById('numero2').value);
+            let numero3 = parseInt(document.getElementById('numero3').value);
+
+            apostadores.push({ nome, numeros: [numero1, numero2, numero3] });
+            
+            // Atualiza o localStorage com os dados
+            localStorage.setItem('apostadores', JSON.stringify(apostadores));
+
+            // Atualiza a lista de apostadores
+            atualizarListaApostadores();
+            
+            // Limpar campos após cadastro
+            document.getElementById('formCadastro').reset();
+        });
+
+        // Função para atualizar a lista de apostadores
+        function atualizarListaApostadores() {
+            let lista = document.getElementById('listaApostadores');
+            lista.innerHTML = '';
+            apostadores.forEach(apostador => {
+                let li = document.createElement('li');
+                li.innerHTML = `${apostador.nome} - Números: ${apostador.numeros.join(', ')}`;
+                lista.appendChild(li);
+            });
+        }
+
+        // Função para realizar o sorteio
+        function realizarSorteio() {
+            let sorteio = [];
+            while (sorteio.length < 3) {
+                let numero = Math.floor(Math.random() * 27) + 1;
+                if (!sorteio.includes(numero)) {
+                    sorteio.push(numero);
+                }
+            }
+            let dataSorteio = new Date().toLocaleString();
+            sorteios.push({ data: dataSorteio, resultado: sorteio });
+
+            // Atualiza o localStorage com os sorteios
+            localStorage.setItem('sorteios', JSON.stringify(sorteios));
+
+            // Verifica os resultados para os apostadores
+            verificarResultados(sorteio);
+
+            // Atualiza a lista de sorteios
+            atualizarListaSorteios();
+        }
+
+        // Função para verificar os resultados de aposta
+        function verificarResultados(sorteio) {
+            apostadores.forEach(apostador => {
+                let acertou = apostador.numeros.every(num => sorteio.includes(num));
+                let comprovante = document.createElement('div');
+                comprovante.classList.add('comprovante');
+                comprovante.innerHTML = `
+                    <h3>Comprovante de Aposta</h3>
+                    <p><strong>Nome:</strong> ${apostador.nome}</p>
+                    <p><strong>Números Apostados:</strong> ${apostador.numeros.join(', ')}</p>
+                    <p><strong>Data do Sorteio:</strong> ${sorteios[sorteios.length - 1].data}</p>
+                    <p><strong>Resultado do Sorteio:</strong> ${sorteio.join(', ')}</p>
+                    <p><strong>Situação:</strong> <span class="${acertou ? 'acertou' : 'nao-acertou'}">
+                        ${acertou ? 'ACERTOU' : 'NÃO ACERTOU'}
+                    </span></p>
+                `;
+                document.body.appendChild(comprovante);
+            });
+        }
+
+        // Função para atualizar a lista de sorteios
+        function atualizarListaSorteios() {
+            let lista = document.getElementById('listaSorteios');
+            lista.innerHTML = '';
+            sorteios.forEach(sorteio => {
+                let li = document.createElement('li');
+                li.innerHTML = `Data: ${sorteio.data} - Resultado: ${sorteio.resultado.join(', ')}`;
+                lista.appendChild(li);
+            });
+        }
+
+        // Carregar os dados ao iniciar a página
+        atualizarListaApostadores();
+        atualizarListaSorteios();
+    </script>
+</body>
+</html>
