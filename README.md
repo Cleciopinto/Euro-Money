@@ -1,2 +1,2 @@
-# Euro-Money
+# Money
 Software de ganhos e investimentos
